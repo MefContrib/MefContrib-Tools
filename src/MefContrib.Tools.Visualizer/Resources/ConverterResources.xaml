@@ -1,0 +1,16 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:MefContrib.Tools.Visualizer.Converters">
+    
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="BrushResources.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+    
+    <converters:PartInfoToColorConverter
+        x:Key="Converter_PartInfoToColor"
+        NormalBrush="{StaticResource Brush_Green}"
+        IsRejectedBrush="{StaticResource Brush_Yellow}"
+        IsPrimaryRejectionBrush="{StaticResource Brush_Red}"/>
+    
+</ResourceDictionary>
