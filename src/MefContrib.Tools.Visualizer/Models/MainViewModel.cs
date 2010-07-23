@@ -8,27 +8,40 @@
     using System.Linq;
     using System.Text;
     using System.Windows.Data;
-    using System.Windows.Input;
-    using MefContrib.Tools.Visualizer.Services;
+	using MefContrib.Tools.Visualizer.Services;
     using Microsoft.ComponentModel.Composition.Diagnostics;
 
 	[Export(typeof(MainViewModel))]
 	public sealed class MainViewModel : NotifyObject
 	{
 		private IPartService fileService;
-
-		private string output;
-		private ICommand openFilesCommand;
-
-		private CompositionInfo compositionInfo;
+		private CompositionContainer _container;
+		private CompositionInfo _compositionInfo;
+		private AggregateCatalog _aggregateCatalog;
+		private Dictionary<PartDefinitionInfo, PartInfoViewModel> _partViewModelMap;
 
 		[ImportingConstructor]
 		public MainViewModel(IPartService fileService)
 		{
 			this.fileService = fileService;
 
+			_aggregateCatalog = new AggregateCatalog();
+
+			_partViewModelMap = new Dictionary<PartDefinitionInfo, PartInfoViewModel>();
+
             this.PartDefinitions = new CollectionViewSource();
-            this.PartDefinitions.SortDescriptions.Add(new SortDescription("IsRejected", ListSortDirection.Descending));
+			this.PartDefinitions.SortDescriptions.Add(new SortDescription("IsRejected", ListSortDirection.Descending));
+		}
+
+		private PartInfoViewModel _selectedPart;
+		public PartInfoViewModel SelectedPart
+		{
+			get { return _selectedPart; }
+			set
+			{
+				_selectedPart = value;
+				RaisePropertyChanged(() => SelectedPart);
+			}
 		}
 
         private CollectionViewSource partDefinitions;
@@ -38,11 +51,10 @@
             {
                 return partDefinitions;
             }
-
             set
             {
                 partDefinitions = value;
-                RaisePropertyChanged("PartDefinitions");
+				RaisePropertyChanged(() => PartDefinitions);
             }
         }
 
@@ -55,47 +67,63 @@
                 });
         }
 
+		public void Reset()
+		{
+			_aggregateCatalog = new AggregateCatalog();
+
+			this.RefreshOutput();
+		}
+
+		public void SetSelectedPart(PartDefinitionInfo partDefinition)
+		{
+			this.SelectedPart = this._partViewModelMap[partDefinition];
+		}
+
+		private void ResetContainer()
+		{
+			//  Dispose any previous container, so that modifying aggregate catalog
+			//  won't cause recomposition failures
+			if (_container != null)
+			{
+				_container.Dispose();
+				_container = null;
+			}
+		}
+
 		private void LoadParts(IEnumerable<ComposablePartCatalog> catalogs)
         {
-            if (catalogs != null && catalogs.Count() > 0)
-            {
-                var aggregateCatalog = new AggregateCatalog();
+			if (catalogs != null && catalogs.Any())
+			{
+				ResetContainer();
 
-                if (catalogs != null)
-                {
-                    foreach (var catalog in catalogs)
-                    {
-                        aggregateCatalog.Catalogs.Add(catalog);
-                    }
-                }
+				if (catalogs != null)
+				{
+					foreach (var catalog in catalogs)
+					{
+						_aggregateCatalog.Catalogs.Add(catalog);
+					}
+				}
 
-                var container = new CompositionContainer(aggregateCatalog);
-                this.compositionInfo = new CompositionInfo(aggregateCatalog, container);
-
-                this.RefreshOutput();
-            }
+				this.RefreshOutput();
+			}
 		}
 
 		private void RefreshOutput()
 		{
-			if (this.compositionInfo != null)
+			ResetContainer();
+
+			this._container = new CompositionContainer(_aggregateCatalog);
 			{
-				StringBuilder builder = new StringBuilder();
+				this._compositionInfo = new CompositionInfo(_aggregateCatalog, _container);
 
-                var definitions = from x in this.compositionInfo.PartDefinitions
-                                  select new PartInfo(x);
+				if (this._compositionInfo != null)
+				{
+					_partViewModelMap = this._compositionInfo.PartDefinitions.ToDictionary(pd => pd, pd => new PartInfoViewModel(pd, this));
 
-                this.partDefinitions.Source = definitions;
-                this.partDefinitions.View.MoveCurrentToFirst();
+					this.partDefinitions.Source = _partViewModelMap.Values.ToList();
+					this.partDefinitions.View.MoveCurrentToFirst();
+				}
 			}
-		}
-
-		private enum PartSelection : int
-		{
-			None = 0,
-			All = 1,
-			AllRejectedParts = 2,
-			RejectedRootCauses = 3
 		}
 	}
 }

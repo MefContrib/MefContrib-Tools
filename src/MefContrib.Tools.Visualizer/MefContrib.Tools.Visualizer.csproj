@@ -79,13 +79,17 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="Commands\RelayCommand.cs" />
+    <Compile Include="Controls\GridSplitter.cs" />
+    <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
+    <Compile Include="Converters\ImportInfoToColorConverter.cs" />
     <Compile Include="Converters\PartInfoToColorConverter.cs" />
     <Compile Include="Extensions\FileExtensions.cs" />
     <Compile Include="Models\ExportInfo.cs" />
     <Compile Include="Models\ImportInfo.cs" />
     <Compile Include="Models\MainViewModel.cs" />
     <Compile Include="Models\NotifyObject.cs" />
-    <Compile Include="Models\PartInfo.cs" />
+    <Compile Include="Models\PartInfoViewModel.cs" />
     <Compile Include="Models\ShellViewModel.cs" />
     <Compile Include="Services\CatalogService.cs" />
     <Compile Include="Services\PartService.cs" />

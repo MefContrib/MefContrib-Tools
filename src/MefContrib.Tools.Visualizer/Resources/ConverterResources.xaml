@@ -12,5 +12,16 @@
         NormalBrush="{StaticResource Brush_Green}"
         IsRejectedBrush="{StaticResource Brush_Yellow}"
         IsPrimaryRejectionBrush="{StaticResource Brush_Red}"/>
-    
+
+	<converters:ImportInfoToColorConverter
+        x:Key="Converter_ImportInfoToColor"
+        CardinalityErrorBrush="{StaticResource Brush_Red}"
+        NoUnsuitableExportsBrush="{StaticResource Brush_Green}"
+        ExportMatchingErrorBrush="{StaticResource Brush_Red}"
+        OptionalExportsUnsuitableBrush="{StaticResource Brush_Blue}"
+        ProvidingPartRejectedBrush="{StaticResource Brush_Yellow}"/>
+
+	<converters:BooleanToVisibilityConverter
+		x:Key="Converter_BooleanToVisibility"/>
+
 </ResourceDictionary>

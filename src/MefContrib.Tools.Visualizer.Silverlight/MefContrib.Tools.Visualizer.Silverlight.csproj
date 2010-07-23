@@ -21,7 +21,7 @@
     <GenerateSilverlightManifest>true</GenerateSilverlightManifest>
     <XapFilename>MefContrib.Tools.Visualizer.xap</XapFilename>
     <SilverlightManifestTemplate>Properties\AppManifest.xml</SilverlightManifestTemplate>
-    <SilverlightAppEntry>MefContrib.Tools.Visualizer.Client.App</SilverlightAppEntry>
+    <SilverlightAppEntry>MefContrib.Tools.Visualizer.App</SilverlightAppEntry>
     <TestPageFileName>TestPage.html</TestPageFileName>
     <CreateTestPage>true</CreateTestPage>
     <ValidateXaml>true</ValidateXaml>
@@ -79,6 +79,7 @@
     <Reference Include="system" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net" />
+    <Reference Include="System.Windows.Controls, Version=2.0.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Windows.Interactivity">
       <HintPath>..\..\dependencies\silverlight\System.Windows.Interactivity.dll</HintPath>
     </Reference>
@@ -86,6 +87,18 @@
     <Reference Include="System.Windows.Browser" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\MefContrib.Tools.Visualizer\Commands\RelayCommand.cs">
+      <Link>Commands\RelayCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\MefContrib.Tools.Visualizer\Controls\GridSplitter.cs">
+      <Link>Controls\GridSplitter.cs</Link>
+    </Compile>
+    <Compile Include="..\MefContrib.Tools.Visualizer\Converters\BooleanToVisibilityConverter.cs">
+      <Link>Converters\BooleanToVisibilityConverter.cs</Link>
+    </Compile>
+    <Compile Include="..\MefContrib.Tools.Visualizer\Converters\ImportInfoToColorConverter.cs">
+      <Link>Converters\ImportInfoToColorConverter.cs</Link>
+    </Compile>
     <Compile Include="..\MefContrib.Tools.Visualizer\Converters\PartInfoToColorConverter.cs">
       <Link>Converters\PartInfoToColorConverter.cs</Link>
     </Compile>
@@ -101,8 +114,8 @@
     <Compile Include="..\MefContrib.Tools.Visualizer\Models\NotifyObject.cs">
       <Link>Models\NotifyObject.cs</Link>
     </Compile>
-    <Compile Include="..\MefContrib.Tools.Visualizer\Models\PartInfo.cs">
-      <Link>Models\PartInfo.cs</Link>
+    <Compile Include="..\MefContrib.Tools.Visualizer\Models\PartInfoViewModel.cs">
+      <Link>Models\PartInfoViewModel.cs</Link>
     </Compile>
     <Compile Include="..\MefContrib.Tools.Visualizer\Models\ShellViewModel.cs">
       <Link>Models\ShellViewModel.cs</Link>

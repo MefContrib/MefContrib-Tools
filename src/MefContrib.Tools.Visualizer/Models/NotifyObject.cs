@@ -3,6 +3,8 @@
 	using System;
 	using System.ComponentModel;
 	using System.Diagnostics;
+	using System.Linq.Expressions;
+	using System.Reflection;
 
 	/// <summary>
 	/// Implements the INotifyPropertyChanged interface and provides
@@ -30,8 +32,18 @@
 		/// <summary>
 		/// Raises the property changed event for the given property.
 		/// </summary>
+		/// <typeparam name="TProperty">The type of the property.</typeparam>
+		/// <param name="property">The property expression.</param>
+		protected virtual void RaisePropertyChanged<TProperty>(Expression<Func<TProperty>> property)
+		{
+			RaisePropertyChanged(GetMemberInfo(property).Name);
+		}
+
+		/// <summary>
+		/// Raises the property changed event for the given property.
+		/// </summary>
 		/// <param name="property">The property that is raising the event.</param>
-		protected void RaisePropertyChanged(string property)
+		private void RaisePropertyChanged(string property)
 		{
 			this.RaisePropertyChanged(property, true);
 		}
@@ -41,7 +53,7 @@
 		/// </summary>
 		/// <param name="property">The property that is raising the event.</param>
 		/// <param name="verifyProperty">if set to <c>true</c> the property should be verified.</param>
-		protected void RaisePropertyChanged(string property, bool verifyProperty)
+		private void RaisePropertyChanged(string property, bool verifyProperty)
 		{
 			if (verifyProperty)
 			{
@@ -76,6 +88,29 @@
 
 				throw new InvalidOperationException(message);
 			}
+		}
+
+		/// <summary>
+		/// Converts an expression into a <see cref="MemberInfo"/>.
+		/// </summary>
+		/// <param name="expression">The expression to convert.</param>
+		/// <returns>The member info.</returns>
+		/// <remarks>
+		/// Originally developed by Rob Eisenberg.  http://caliburnmicro.codeplex.com/
+		/// </remarks>
+		private static MemberInfo GetMemberInfo(Expression expression)
+		{
+			var lambda = (LambdaExpression)expression;
+
+			MemberExpression memberExpression;
+			if (lambda.Body is UnaryExpression)
+			{
+				var unaryExpression = (UnaryExpression)lambda.Body;
+				memberExpression = (MemberExpression)unaryExpression.Operand;
+			}
+			else memberExpression = (MemberExpression)lambda.Body;
+
+			return memberExpression.Member;
 		}
 		#endregion
 	}

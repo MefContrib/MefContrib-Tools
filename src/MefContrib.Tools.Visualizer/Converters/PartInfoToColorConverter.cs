@@ -18,7 +18,7 @@
         {
             Brush brush = this.NormalBrush;
 
-            PartInfo partInfo = value as PartInfo;
+            PartInfoViewModel partInfo = value as PartInfoViewModel;
 
             if (partInfo != null && partInfo.IsRejected && partInfo.IsPrimaryRejection)
             {
